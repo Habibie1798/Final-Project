@@ -1,0 +1,8 @@
+venv/
+*.zip
+*.csv
+*.pkl
+__pycache__/
+.DS_Store
+*.pyc
+.git/
