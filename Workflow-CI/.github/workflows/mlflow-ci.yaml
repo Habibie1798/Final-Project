@@ -25,25 +25,26 @@ jobs:
 
       - name: Install dependencies
         run: |
-          conda env update -f MLProject/conda.yaml
+          conda env update -f Workflow-CI/MLProject/conda.yaml
 
       - name: Run MLflow Project
         run: |
-          mlflow run MLProject
+          mlflow run Workflow-CI/MLProject
 
-      # ====== STEP TAMBAHAN UNTUK ADVANCED ======
       - name: Build Docker Model
         run: |
-          # Ganti path model sesuai lokasi hasil run kamu
-          MODEL_PATH=$(ls -d mlruns/0/*/artifacts/model | head -n 1)
-          echo "Model path: $MODEL_PATH"
-          mlflow models build-docker -m $MODEL_PATH -n habibie1798/final-project:latest
+          mlflow models build-docker -m Workflow-CI/MLProject/mlruns/0/*/artifacts/model -n final_model
 
       - name: Log in to Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Tag Docker Image
+        run: |
+          docker tag final_model:latest habibiealrasyid17/final_model:latest
+
       - name: Push Docker Image
-        run: docker push habibie1798/final-project:latest
+        run: |
+          docker push habibiealrasyid17/final_model:latest
