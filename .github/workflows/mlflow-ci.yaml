@@ -38,8 +38,10 @@ jobs:
         shell: bash -l {0}
         run: |
           conda activate telco-churn-env
-          # Ubah path model berikut sesuai dengan lokasi output model mlflow di repo kamu
-          mlflow models build-docker -m Workflow-CI/MLProject/mlruns/0/*/artifacts/model -n final_model
+          # Cari folder model artifact terbaru
+          MODEL_PATH=$(ls -td Workflow-CI/MLProject/mlruns/0/*/artifacts/model | head -1)
+          echo "Model path found: $MODEL_PATH"
+          mlflow models build-docker -m $MODEL_PATH -n final_model
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
