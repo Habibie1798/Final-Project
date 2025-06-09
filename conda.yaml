@@ -1,0 +1,15 @@
+name: telco-churn-env
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.12.7
+  - pip
+  - pip:
+      - mlflow
+      - pandas
+      - scikit-learn
+      - matplotlib
+      - seaborn
+      - joblib
+      - dagshub
