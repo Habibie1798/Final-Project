@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/ABE/Proyek%20Akhir%20Dicoding/Final%20Project/Membangun%20Model/mlruns/0/25ff28e829a04c7f854a6886dfd2cdb0/artifacts
+end_time: 1749469072176
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 25ff28e829a04c7f854a6886dfd2cdb0
+run_name: trusting-snail-777
+run_uuid: 25ff28e829a04c7f854a6886dfd2cdb0
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1749469038352
+status: 3
+tags: []
+user_id: abe

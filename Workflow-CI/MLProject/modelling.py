@@ -1,3 +1,4 @@
+import argparse
 import pandas as pd
 import mlflow
 import mlflow.sklearn
@@ -5,8 +6,13 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
+# Untuk support parameter dari MLflow Project/CI: --data_path
+parser = argparse.ArgumentParser()
+parser.add_argument('--data_path', type=str, default='namadataset_preprocessing/telco_preprocessed.csv')
+args = parser.parse_args()
+
 # Load data hasil preprocessing
-df = pd.read_csv('namadataset_preprocessing/telco_preprocessed.csv')
+df = pd.read_csv(args.data_path)
 X = df.drop('Churn', axis=1)
 y = df['Churn']
 
