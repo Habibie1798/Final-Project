@@ -21,13 +21,12 @@ def preprocess(input_path, output_path):
     num_cols = ['tenure', 'MonthlyCharges', 'TotalCharges']
     df[num_cols] = scaler.fit_transform(df[num_cols])
 
-    # Buat folder output jika belum ada
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     df.to_csv(output_path, index=False)
     print('Preprocessing selesai. Hasil disimpan di:', output_path)
 
 if __name__ == '__main__':
-    preprocess(
-        '../namadataset_raw/WA_Fn-UseC_-Telco-Customer-Churn.csv', 
-        'namadataset_preprocessing/telco_preprocessed.csv'
-    )
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    input_path = os.path.join(BASE_DIR, '..', 'namadataset_raw', 'WA_Fn-UseC_-Telco-Customer-Churn.csv')
+    output_path = os.path.join(BASE_DIR, 'namadataset_preprocessing', 'telco_preprocessed.csv')
+    preprocess(input_path, output_path)
