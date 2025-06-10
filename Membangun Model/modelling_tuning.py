@@ -1,5 +1,6 @@
 import dagshub
 import mlflow
+import mlflow.sklearn
 import pandas as pd
 import joblib
 import matplotlib.pyplot as plt
@@ -12,15 +13,15 @@ from sklearn.metrics import (
     confusion_matrix, roc_auc_score, roc_curve
 )
 
-# =====================
+# =======================
 # 1. KONEK DAGSHUB
 dagshub.init(
-    repo_owner='adambagushabibiear',     # ganti sesuai username kamu
-    repo_name='Final_Project',           # ganti sesuai nama repo kamu
+    repo_owner='adambagushabibiear',     # Ganti sesuai username kamu
+    repo_name='Final_Project',           # Ganti sesuai nama repo kamu
     mlflow=True
 )
 
-# =====================
+# =======================
 # 2. LOAD DATA
 df = pd.read_csv('namadataset_preprocessing/telco_preprocessed.csv')
 X = df.drop('Churn', axis=1)
@@ -28,7 +29,7 @@ y = df['Churn']
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# =====================
+# =======================
 # 3. TUNING
 param_grid = {
     'n_estimators': [50, 100, 150],
@@ -42,7 +43,7 @@ training_time = time.time() - start_time
 
 best_model = grid.best_estimator_
 
-# =====================
+# =======================
 # 4. METRIKS & PREDIKSI
 preds = best_model.predict(X_test)
 proba = best_model.predict_proba(X_test)[:, 1]   # Untuk ROC AUC
@@ -53,9 +54,9 @@ precision = precision_score(y_test, preds)
 recall = recall_score(y_test, preds)
 roc_auc = roc_auc_score(y_test, proba)   # METRIK TAMBAHAN
 
-# =====================
-# 5. LOGGING MANUAL KE DAGSHUB
-with mlflow.start_run():
+# =======================
+# 5. LOGGING MANUAL KE DAGSHUB/MLflow
+with mlflow.start_run() as run:
     # Log parameter tuning
     mlflow.log_param('n_estimators', best_model.n_estimators)
     mlflow.log_param('max_depth', best_model.max_depth)
@@ -69,7 +70,9 @@ with mlflow.start_run():
     mlflow.log_metric('roc_auc', roc_auc)
     mlflow.log_metric('training_time', training_time)
     mlflow.log_metric('num_features', X.shape[1])
-    # Log artefak model
+    # Log model untuk serve MLflow
+    mlflow.sklearn.log_model(best_model, "model")   # << PENTING!
+    # Log artefak model juga (opsional untuk backup)
     joblib.dump(best_model, 'rf_best_model.pkl')
     mlflow.log_artifact('rf_best_model.pkl')
     # Log confusion matrix
@@ -94,6 +97,8 @@ with mlflow.start_run():
     plt.savefig('roc_curve.png')
     mlflow.log_artifact('roc_curve.png')
     plt.close()
+    # Info run id untuk serve
+    print(f"Run ID untuk serve: {run.info.run_id}")
 
 print(f"Best Params: {grid.best_params_}")
 print(f"Accuracy: {acc:.4f}, F1: {f1:.4f}, Precision: {precision:.4f}, Recall: {recall:.4f}, ROC AUC: {roc_auc:.4f}")
